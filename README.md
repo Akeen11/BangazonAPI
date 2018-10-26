@@ -20,3 +20,7 @@ and [Postman](https://www.getpostman.com/).
 
 ----
 ## API calls :link:
+
+----
+![CustomerERD](https://github.com/NSS-Likeable-Lemurs/BangazonAPI/blob/master/Images/Bangazon-Customer.PNG)
+![CompanyERD](https://github.com/NSS-Likeable-Lemurs/BangazonAPI/blob/master/Images/Bangazon-Company.PNG)
