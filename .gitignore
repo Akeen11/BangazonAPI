@@ -1,0 +1,12 @@
+appsettings.json
+.DS_Store
+node_modules
+bower_components
+__pycache__
+*.pyc
+bin
+obj
+*.db
+*.sqlite3
+.vscode
+.vs
