@@ -222,7 +222,7 @@ VALUES
 INSERT INTO PaymentType
     (AcctNumber, Name, CustomerId)
 VALUES
-    (156483, 'Discover', 1)
+    (156483, 'Discover', 4)
 ;
 
 --Gretchen Insert into Department 
@@ -272,19 +272,19 @@ Values
 
 INSERT INTO EmployeeTraining
 (EmployeeId, TrainingProgramId)
-VALUES(2, 5);
+VALUES(1, 1);
 
 INSERT INTO EmployeeTraining
 (EmployeeId, TrainingProgramId)
-VALUES(3, 6);
+VALUES(3, 2);
 
 INSERT INTO EmployeeTraining
 (EmployeeId, TrainingProgramId)
-VALUES(4, 7);
+VALUES(4, 3);
 
 INSERT INTO EmployeeTraining
 (EmployeeId, TrainingProgramId)
-VALUES(5, 8);
+VALUES(2, 4);
 
 --Kayla Computer insert statements 
 INSERT INTO Computer
@@ -333,22 +333,22 @@ INSERT INTO Employee
 
 INSERT INTO ComputerEmployee
 	(EmployeeId, ComputerId, AssignDate, UnassignDate)
-	VALUES (2, 4, '2015-12-2 10:34:09 PM', '2018-2-23 01:34:09 PM')
+	VALUES (1, 1, '2015-12-2 10:34:09 PM', '2018-2-23 01:34:09 PM')
 ;
 
 INSERT INTO ComputerEmployee
 	(EmployeeId, ComputerId, AssignDate, UnassignDate)
-	VALUES (3, 5, '2017-12-2 04:34:09 AM', '2018-12-3 01:34:09 PM')
+	VALUES (2, 2, '2017-12-2 04:34:09 AM', '2018-12-3 01:34:09 PM')
 ;
 
 INSERT INTO ComputerEmployee
 	(EmployeeId, ComputerId, AssignDate, UnassignDate)
-	VALUES (3, 6, '2016-11-2 09:23:09 PM', NULL)
+	VALUES (3, 3, '2016-11-2 09:23:09 PM', NULL)
 ;
 
 INSERT INTO ComputerEmployee
 	(EmployeeId, ComputerId, AssignDate, UnassignDate)
-	VALUES (4, 7, '2012-10-2 07:12:23 PM', NULL)
+	VALUES (4, 4, '2012-10-2 07:12:23 PM', NULL)
 ;
 
 --Kayla Insert into order 
