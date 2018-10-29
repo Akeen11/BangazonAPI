@@ -127,8 +127,19 @@ namespace Bangazon.Controllers
 
         // DELETE api/<controller>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            string sql = $@"DELETE FROM ProductType WHERE Id = {id}";
+
+            using (IDbConnection conn = Connection)
+            {
+                int rowsAffected = await conn.ExecuteAsync(sql);
+                if (rowsAffected > 0)
+                {
+                    return new StatusCodeResult(StatusCodes.Status204NoContent);
+                }
+                throw new Exception("No rows affected");
+            }
 
         }
 
