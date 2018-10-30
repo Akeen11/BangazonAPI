@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
 
+//Aaron Keen
+//This model represents the customer
+
 namespace Bangazon.Models
 {
     public class Customer

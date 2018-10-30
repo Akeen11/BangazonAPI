@@ -10,6 +10,9 @@ using Dapper;
 using Microsoft.AspNetCore.Http;
 using Bangazon.Models;
 
+//Aaron Keen
+//This controller allows you to get all customers, get a single customer, query the products the customer is selling, query the payment types the customer has used to pay, post a new customer, and edit an existing customer
+
 namespace Bangazon.Controllers
 {
     [Route("api/[controller]")]

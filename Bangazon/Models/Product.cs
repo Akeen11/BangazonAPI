@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+//Aaron Keen
+//This model represents the Product
+
 namespace Bangazon.Models
 {
     public class Product
