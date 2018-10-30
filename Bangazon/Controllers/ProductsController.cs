@@ -14,11 +14,11 @@ namespace Bangazon.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class ProductsController : ControllerBase
     {
         private readonly IConfiguration _config;
 
-        public ProductController(IConfiguration config)
+        public ProductsController(IConfiguration config)
         {
             _config = config;
         }
@@ -87,22 +87,22 @@ namespace Bangazon.Controllers
             }
         }
 
-        // GET api/students/5
+        // GET api/products/5
         [HttpGet("{id}", Name = "GetProduct")]
         public async Task<IActionResult> Get([FromRoute]int id)
         {
-            string sql = @"
+            string sql = $@"
             SELECT
                 p.Id,
                 p.Price,
                 p.Title,
                 p.Description,
-                p.Quantity,
-                p.ProductTypeId,
-                p.CustomerId,
+                p.Quantity             
                 FROM Product p
-            WHERE 1=1
+            WHERE p.id = {id}
             ";
+            //    p.ProductTypeId,
+            //    p.CustomerId,
             //    pt.Id,
             //    pt.Name,
             //    c.Id,
@@ -114,7 +114,7 @@ namespace Bangazon.Controllers
             using (IDbConnection conn = Connection)
             {
                 IEnumerable<Product> products = await conn.QueryAsync<Product>(sql);
-                return Ok(products);
+                return Ok(products.Single());
             }
         }
 
