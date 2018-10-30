@@ -10,6 +10,13 @@ using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System;
 
+//Gretchen Ward
+// This controller allows the get all payment types, get a single payment type, post a new payment type, put(edit) an existing payment type, and delete a payment type
+
+
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
+
 namespace Bangazon.Controllers
 {
     [Route("api/[controller]")]
@@ -86,7 +93,7 @@ namespace Bangazon.Controllers
         {
             string sql = $@"
             UPDATE PaymentType
-            SET  paymentTypeName = '{paymentType.Name}'
+            SET  Name = '{paymentType.Name}'
             WHERE Id = {id}";
 
             try
