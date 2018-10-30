@@ -127,12 +127,12 @@ namespace Bangazon.Controllers
                 ,'{product.Title}'
                 ,'{product.Description}'
                 ,'{product.Quantity}'
-                ,'{product.ProductType}'
+                ,'{product.ProductTypeId}'
             );
             SELECT SCOPE_IDENTITY();";
 
             //, CustomerId
-            //,'{product.Customer}'
+            //,'{product.CustomerId}'
 
             using (IDbConnection conn = Connection)
             {
@@ -150,7 +150,7 @@ namespace Bangazon.Controllers
             UPDATE Product
             SET Price = '{product.Price}',
                 Title = '{product.Title}',
-                Description = '{product.Description}'
+                Description = '{product.Description}',
                 Quantity = '{product.Quantity}'
             WHERE Id = {id}";
 
