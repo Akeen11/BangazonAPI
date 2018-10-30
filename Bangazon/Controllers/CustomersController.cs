@@ -55,7 +55,7 @@ namespace Bangazon.Controllers
 
             if (_include == "products")
             {
-                Dictionary<int, Customer> report = new Dictionary<int, Customer>();
+                Dictionary<int, Customer> productReport = new Dictionary<int, Customer>();
 
                 Connection.Query<Customer, Product, Customer>(
                     @" 
@@ -74,16 +74,46 @@ namespace Bangazon.Controllers
                     JOIN Product p ON c.Id = p.CustomerId
                 ",
                     (Customer, Product) => {
-                        if (!report.ContainsKey(Customer.Id))
+                        if (!productReport.ContainsKey(Customer.Id))
                         {
-                            report[Customer.Id] = Customer;
+                            productReport[Customer.Id] = Customer;
                         }
-                        report[Customer.Id].Products.Add(Product);
+                        productReport[Customer.Id].Products.Add(Product);
 
                         return Customer;
                     }
                 );
-                return Ok(report.Values);
+                return Ok(productReport.Values);
+            }
+
+            if (_include == "payments")
+            {
+                Dictionary<int, Customer> paymentReport = new Dictionary<int, Customer>();
+
+                Connection.Query<Customer, PaymentType, Customer>(
+                    @" 
+                    SELECT 
+                        c.Id,
+                        c.FirstName,
+                        c.LastName,
+                        pt.Id,
+                        pt.AcctNumber,
+                        pt.Name,
+                        pt.CustomerId
+                    FROM Customer c
+                    JOIN PaymentType pt ON c.Id = pt.CustomerId
+                ",
+                    (Customer, PaymentType) => {
+                        if (!paymentReport.ContainsKey(Customer.Id))
+                        {
+                            paymentReport[Customer.Id] = Customer;
+                        }
+                        paymentReport[Customer.Id].PaymentTypes.Add(PaymentType);
+
+                        return Customer;
+                    }
+                );
+                return Ok(paymentReport.Values);
             }
 
             Console.WriteLine(sql);
