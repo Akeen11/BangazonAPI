@@ -75,7 +75,7 @@ namespace Bangazon.Controllers
             (AcctNumber, Name, CustomerId)
             VALUES
             ('{paymentType.AcctNumber}', '{paymentType.Name}','{paymentType.CustomerId}');
-           SELECT SCOPE_IDENTITY()  MAX(Id) from PaymentType";
+           SELECT SCOPE_IDENTITY()";
 
             using (IDbConnection conn = Connection)
             {
@@ -94,9 +94,9 @@ namespace Bangazon.Controllers
             string sql = $@"
             UPDATE PaymentType
                  
-            SET   AcctNumber = '{paymentType.AcctNumber}'
-                  Name = '{paymentType.Name}'
-                  CustomerId ='{paymentType.CustomerId}'
+            SET   AcctNumber = {paymentType.AcctNumber},
+                  Name = '{paymentType.Name}',
+                  CustomerId ={paymentType.CustomerId}
 
             WHERE Id = {id}";
 
