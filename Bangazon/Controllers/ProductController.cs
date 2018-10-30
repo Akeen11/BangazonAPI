@@ -43,17 +43,19 @@ namespace Bangazon.Controllers
                 p.Description,
                 p.Quantity,
                 p.ProductTypeId,
-                p.CustomerId,
-                pt.Id,
-                pt.Name,
-                c.Id,
-                c.FirstName,
-                c.LastName
-            FROM Product p
-            JOIN ProductType pt ON p.ProductTypeId = pt.Id
-            JOIN Customer c ON p.CustomerId = c.Id
+                p.CustomerId
+                FROM Product p
             WHERE 1=1
             ";
+
+            //    pt.Id,
+            //    pt.Name,
+            //    c.Id,
+            //    c.FirstName,
+            //    c.LastName
+            //
+            //JOIN ProductType pt ON p.ProductTypeId = pt.Id
+            //JOIN Customer c ON p.CustomerId = c.Id
 
             if (q != null)
             {
@@ -71,14 +73,15 @@ namespace Bangazon.Controllers
             using (IDbConnection conn = Connection)
             {
 
-                IEnumerable<Product> products = await conn.QueryAsync<Product, ProductType, Customer, Product>(
-                    sql,
-                    (product, productType, customer) =>
-                    {
-                        product.ProductType = productType;
-                        product.Customer = customer;
-                        return product;
-                    }
+                IEnumerable<Product> products = await conn.QueryAsync<Product>(
+                //, ProductType, Customer, Product
+                sql
+                    //(product, productType, customer) =>
+                    //{
+                    //    product.ProductType = productType;
+                    //    product.Customer = customer;
+                    //    return product;
+                    //}
                 );
                 return Ok(products);
             }
@@ -97,16 +100,16 @@ namespace Bangazon.Controllers
                 p.Quantity,
                 p.ProductTypeId,
                 p.CustomerId,
-                pt.Id,
-                pt.Name,
-                c.Id,
-                c.FirstName,
-                c.LastName
-            FROM Product p
-            JOIN ProductType pt ON p.ProductTypeId = pt.Id
-            JOIN Customer c ON p.CustomerId = c.Id
+                FROM Product p
             WHERE 1=1
             ";
+            //    pt.Id,
+            //    pt.Name,
+            //    c.Id,
+            //    c.FirstName,
+            //    c.LastName
+            //JOIN ProductType pt ON p.ProductTypeId = pt.Id
+            //JOIN Customer c ON p.CustomerId = c.Id
 
             using (IDbConnection conn = Connection)
             {
@@ -120,17 +123,19 @@ namespace Bangazon.Controllers
         public async Task<IActionResult> Post([FromBody] Product product)
         {
             string sql = $@"INSERT INTO Product 
-            (Price, Title, Description, Quantity, ProductTypeId, CustomerId)
+            (Price, Title, Description, Quantity)
             VALUES
             (
                 '{product.Price}'
                 ,'{product.Title}'
                 ,'{product.Description}'
                 ,'{product.Quantity}'
-                ,'{product.ProductTypeId}'
-                ,'{product.CustomerId}'
             );
             SELECT SCOPE_IDENTITY();";
+
+            //, ProductTypeId, CustomerId
+            //,'{product.ProductTypeId}'
+            //,'{product.CustomerId}'
 
             using (IDbConnection conn = Connection)
             {
