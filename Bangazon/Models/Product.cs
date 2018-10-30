@@ -12,7 +12,7 @@ namespace Bangazon.Models
     public string Title { get; set; }
     public string Description { get; set; }
     public int Quantity { get; set; }
-    //public ProductType ProductType { get; set; }
+    public ProductType ProductType { get; set; }
     //public Customer Customer { get; set; }
     }
 }
