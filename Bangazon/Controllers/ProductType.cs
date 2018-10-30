@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
+//Kayla Reid
+// This controller allows the get all product types, get a single product type, post a new product type, put(edit) an existing product type, and delete a product type
+
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
