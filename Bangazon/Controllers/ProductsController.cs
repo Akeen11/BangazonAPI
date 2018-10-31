@@ -10,6 +10,11 @@ using Dapper;
 using Microsoft.AspNetCore.Http;
 using Bangazon.Models;
 
+// David Taylor
+// This controller allows the get all product, get a single product, post a new product, put(edit) an existing product, and delete a product.
+
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
 namespace Bangazon.Controllers
 {
     [Route("api/[controller]")]
