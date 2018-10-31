@@ -9,9 +9,14 @@ namespace Bangazon.Models
     public class Order
     {
         public int Id { get; set; }
+
+        // public Customer Customer { get; set; }
+
         public int CustomerId { get; set; }
+
+        //use paymentTypeId to find out if order the is compleated 
         public int PaymentTypeId { get; set; }
 
-        public List<Product> Product { get; set; } = new List<Product>();
+        // public List<Product> productList { get; set; } = new List<Product>();
     }
 }
