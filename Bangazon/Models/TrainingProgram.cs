@@ -16,6 +16,10 @@ namespace Bangazon.Models
     
         public int MaximumAttendees { get; set; }
 
+        public int EmployeeTrainingId { get; set; }
+
+        public int EmployeeId { get; set; }
+
         public List<Employee> Employees { get; set; } = new List<Employee>();
     }
 }
