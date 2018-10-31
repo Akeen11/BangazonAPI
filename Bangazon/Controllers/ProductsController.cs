@@ -110,14 +110,23 @@ namespace Bangazon.Controllers
                 c.FirstName,
                 c.LastName
                 FROM Product p
-                JOIN ProductType pt ON p.ProductTypeId = pt.Id
-                JOIN Customer c ON p.CustomerId = c.Id
+                JOIN ProductType pt ON pt.Id = p.ProductTypeId
+                JOIN Customer c ON c.Id = p.CustomerId
                 WHERE p.Id = {id}
-            ";                
+            ";
+
 
             using (IDbConnection conn = Connection)
             {
-                IEnumerable<Product> products = await conn.QueryAsync<Product>(sql);
+                IEnumerable<Product> products = await conn.QueryAsync<Product, ProductType, Customer, Product>
+                (sql,
+                (product, productType, customer) =>
+                    {
+                    product.ProductType = productType;
+                    product.Customer = customer;
+                    return product;
+                })
+                ;
                 return Ok(products.Single());
             }
         }
