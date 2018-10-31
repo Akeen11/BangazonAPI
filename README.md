@@ -7,7 +7,6 @@ Bangazon is an e-commerce store where users are able to buy and sell products. T
 ----
 ## Software Dependencies :space_invader:
 
-
 [SSMS](https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-2017), 
 [Visual Studio](https://visualstudio.microsoft.com/),
 and [Postman](https://www.getpostman.com/).
