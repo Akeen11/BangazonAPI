@@ -17,7 +17,7 @@ namespace Bangazon.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomersController : Controller
+    public class CustomersController : ControllerBase
     {
         private readonly IConfiguration _config;
 
@@ -34,7 +34,7 @@ namespace Bangazon.Controllers
             }
         }
 
-        //GET api/Customers?q=Taco
+        //GET api/Customers
         [HttpGet]
         public async Task<IActionResult> Get(string q, string _include)
         {
@@ -47,6 +47,7 @@ namespace Bangazon.Controllers
             WHERE 1=1
             ";
 
+            //GET api/Customers?q=Taco
             if (q != null)
             {
                 string isQ = $@"
@@ -56,12 +57,10 @@ namespace Bangazon.Controllers
                 sql = $"{sql} {isQ}";
             }
 
+            //GET api/Customers?q=Taco&_include=products
             if (_include == "products")
             {
-                Dictionary<int, Customer> productReport = new Dictionary<int, Customer>();
-
-                Connection.Query<Customer, Product, Customer>(
-                    @" 
+                string sqlproduct = @" 
                     SELECT 
                         c.Id,
                         c.FirstName,
@@ -74,8 +73,22 @@ namespace Bangazon.Controllers
                         p.Description,
                         p.Quantity
                     FROM Customer c
-                    JOIN Product p ON c.Id = p.CustomerId
-                ",
+                    LEFT JOIN Product p ON c.Id = p.CustomerId
+                    WHERE 1=1
+                ";
+                if (q != null)
+                {
+                    string isQ = $@"
+                    AND c.FirstName LIKE '%{q}%'
+                    OR c.LastName LIKE '%{q}%'
+                ";
+                    sqlproduct = $"{sqlproduct} {isQ}";
+                }
+                Dictionary<int, Customer> productReport = new Dictionary<int, Customer>();
+
+                Connection.Query<Customer, Product, Customer>(
+                    sqlproduct,
+
                     (Customer, Product) => {
                         if (!productReport.ContainsKey(Customer.Id))
                         {
@@ -89,12 +102,10 @@ namespace Bangazon.Controllers
                 return Ok(productReport.Values);
             }
 
+            //GET api/Customers?q=Taco&_include=payments
             if (_include == "payments")
             {
-                Dictionary<int, Customer> paymentReport = new Dictionary<int, Customer>();
-
-                Connection.Query<Customer, PaymentType, Customer>(
-                    @" 
+                string sqlpayment = @" 
                     SELECT 
                         c.Id,
                         c.FirstName,
@@ -104,8 +115,22 @@ namespace Bangazon.Controllers
                         pt.Name,
                         pt.CustomerId
                     FROM Customer c
-                    JOIN PaymentType pt ON c.Id = pt.CustomerId
-                ",
+                    LEFT JOIN PaymentType pt ON c.Id = pt.CustomerId
+                    WHERE 1=1
+                ";
+                if (q != null)
+                {
+                    string isQ = $@"
+                    AND c.FirstName LIKE '%{q}%'
+                    OR c.LastName LIKE '%{q}%'
+                ";
+                    sqlpayment = $"{sqlpayment} {isQ}";
+                }
+                Dictionary<int, Customer> paymentReport = new Dictionary<int, Customer>();
+
+                Connection.Query<Customer, PaymentType, Customer>(
+                   sqlpayment,
+
                     (Customer, PaymentType) => {
                         if (!paymentReport.ContainsKey(Customer.Id))
                         {
@@ -119,8 +144,6 @@ namespace Bangazon.Controllers
                 return Ok(paymentReport.Values);
             }
 
-            Console.WriteLine(sql);
-
             using (IDbConnection conn = Connection)
             {
 
@@ -131,7 +154,7 @@ namespace Bangazon.Controllers
 
         // GET api/customers/5
         [HttpGet("{id}", Name = "GetCustomer")]
-        public async Task<IActionResult> Get([FromRoute]int id)
+        public async Task<IActionResult> Get([FromRoute]int id, string _include)
         {
             string sql = $@"
             SELECT
@@ -142,10 +165,83 @@ namespace Bangazon.Controllers
             WHERE c.Id = {id}
             ";
 
+            if (_include == "products")
+            {
+                string sqlproduct = $@" 
+                    SELECT 
+                        c.Id,
+                        c.FirstName,
+                        c.LastName,
+                        p.Id,
+                        p.ProductTypeId,
+                        p.CustomerId,
+                        p.Price,
+                        p.Title,
+                        p.Description,
+                        p.Quantity
+                    FROM Customer c
+                    LEFT JOIN Product p ON c.Id = p.CustomerId
+                    WHERE c.Id = {id}
+                ";
+
+                
+                
+                Dictionary<int, Customer> productReport = new Dictionary<int, Customer>();
+
+                Connection.Query<Customer, Product, Customer>(
+                    sqlproduct,
+
+                    (Customer, Product) => {
+                        if (!productReport.ContainsKey(Customer.Id))
+                        {
+                            productReport[Customer.Id] = Customer;
+                        }
+                        productReport[Customer.Id].Products.Add(Product);
+
+                        return Customer;
+                    }
+                );
+                return Ok(productReport.Values.Single());
+            }
+
+            if (_include == "payments")
+            {
+                string sqlpayment = $@" 
+                    SELECT 
+                        c.Id,
+                        c.FirstName,
+                        c.LastName,
+                        pt.Id,
+                        pt.AcctNumber,
+                        pt.Name,
+                        pt.CustomerId
+                    FROM Customer c
+                    LEFT JOIN PaymentType pt ON c.Id = pt.CustomerId
+                    WHERE c.Id = {id}
+                ";
+                
+                Dictionary<int, Customer> paymentReport = new Dictionary<int, Customer>();
+
+                Connection.Query<Customer, PaymentType, Customer>(
+                   sqlpayment,
+
+                    (Customer, PaymentType) => {
+                        if (!paymentReport.ContainsKey(Customer.Id))
+                        {
+                            paymentReport[Customer.Id] = Customer;
+                        }
+                        paymentReport[Customer.Id].PaymentTypes.Add(PaymentType);
+
+                        return Customer;
+                    }
+                );
+                return Ok(paymentReport.Values.Single());
+            }
+
             using (IDbConnection conn = Connection)
             {
                 IEnumerable<Customer> customers = await conn.QueryAsync<Customer>(sql);
-                return Ok(customers);
+                return Ok(customers.Single());
             }
         }
 
