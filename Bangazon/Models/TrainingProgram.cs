@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+//gretchen
+//model for trainingprogram
 namespace Bangazon.Models
 {
     public class TrainingProgram

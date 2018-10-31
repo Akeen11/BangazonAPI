@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-
+//Gretchen
+//model for computer
 namespace Bangazon.Models
 {
     public class Computer
