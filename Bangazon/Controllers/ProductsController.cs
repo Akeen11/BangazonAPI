@@ -36,9 +36,9 @@ namespace Bangazon.Controllers
             }
         }
 
-        // GET api/students?q=Taco
+        // GET
         [HttpGet]
-        public async Task<IActionResult> Get(string q)
+        public async Task<IActionResult> Get()
         {
             string sql = @"
             SELECT
@@ -59,21 +59,6 @@ namespace Bangazon.Controllers
                 JOIN Customer c ON p.CustomerId = c.Id
             WHERE 1=1
             ";
-
-            if (q != null)
-            {
-                string isQ = $@"
-                    AND p.Price LIKE '%{q}%'
-                    OR p.Title LIKE '%{q}%'
-                    OR p.Description LIKE '%{q}%'
-                    OR p.Quantity LIKE '%{q}%'
-                    OR p.ProductTypeId LIKE '%{q}%'
-                    OR p.CustomerId LIKE '%{q}%'
-                ";
-                sql = $"{sql} {isQ}";
-            }
-
-            Console.WriteLine(sql);
 
             using (IDbConnection conn = Connection)
             {
