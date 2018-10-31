@@ -15,7 +15,7 @@ namespace Bangazon.Models
         public int CustomerId { get; set; }
 
         //use paymentTypeId to find out if order the is compleated 
-        public int PaymentTypeId { get; set; }
+        public int? PaymentTypeId { get; set; }
 
         // public List<Product> productList { get; set; } = new List<Product>();
     }
