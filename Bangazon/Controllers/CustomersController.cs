@@ -58,7 +58,7 @@ namespace Bangazon.Controllers
             }
 
             //GET api/Customers?q=Taco&_include=products
-            if (_include == "products")
+            if (_include != null && _include == "products")
             {
                 string sqlproduct = @" 
                     SELECT 
@@ -103,7 +103,7 @@ namespace Bangazon.Controllers
             }
 
             //GET api/Customers?q=Taco&_include=payments
-            if (_include == "payments")
+            if (_include != null && _include == "payments")
             {
                 string sqlpayment = @" 
                     SELECT 
@@ -165,7 +165,7 @@ namespace Bangazon.Controllers
             WHERE c.Id = {id}
             ";
 
-            if (_include == "products")
+            if (_include != null && _include == "products")
             {
                 string sqlproduct = $@" 
                     SELECT 
@@ -183,8 +183,6 @@ namespace Bangazon.Controllers
                     LEFT JOIN Product p ON c.Id = p.CustomerId
                     WHERE c.Id = {id}
                 ";
-
-                
                 
                 Dictionary<int, Customer> productReport = new Dictionary<int, Customer>();
 
@@ -204,7 +202,7 @@ namespace Bangazon.Controllers
                 return Ok(productReport.Values.Single());
             }
 
-            if (_include == "payments")
+            if (_include != null && _include == "payments")
             {
                 string sqlpayment = $@" 
                     SELECT 
