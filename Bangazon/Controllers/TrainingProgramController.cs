@@ -37,8 +37,9 @@ namespace Bangazon.Controllers
         }
 
         // GET api/trainingprograms?_include=employees
+        // GET api/trainingprograms?completed
         [HttpGet]
-        public async Task<IActionResult> Get(string _include)
+        public async Task<IActionResult> Get(string _include, bool completed)
         {
             string sql = @"
             SELECT
@@ -47,7 +48,7 @@ namespace Bangazon.Controllers
                 tp.EndDate,
                 tp.MaxAttendees
                 FROM TrainingProgram tp
-                WHERE 1 = 1
+                WHERE 1=1
                 ";
             if (_include != null && _include == "employees")
             {
@@ -65,7 +66,7 @@ namespace Bangazon.Controllers
                 FROM TrainingProgram tp
                 LEFT JOIN EmployeeTraining et ON tp.Id = et.TrainingProgramId
                 LEFT JOIN Employee e ON et.EmployeeId = e.Id
-            WHERE 1=1
+             WHERE 1=1
             ";
 
                 using (IDbConnection conn = Connection)
@@ -88,7 +89,89 @@ namespace Bangazon.Controllers
                    return Ok(trainingDictionary.Values);
                 }
             }
-            using (IDbConnection conn = Connection)
+            if (completed != null && completed == false){
+                string sqlTraining = @"
+            SELECT
+                tp.Id,
+                tp.StartDate,
+                tp.EndDate,
+                tp.MaxAttendees,
+                e.Id,
+                e.FirstName,
+                e.LastName,
+                e.DepartmentId,
+                e.IsSuperVisor
+                FROM TrainingProgram tp
+                LEFT JOIN EmployeeTraining et ON tp.Id = et.TrainingProgramId
+                LEFT JOIN Employee e ON et.EmployeeId = e.Id
+             WHERE StartDate >=  CONVERT(DATETIME, {fn CURDATE()})
+            ";
+
+                using (IDbConnection conn = Connection)
+                {
+                    Dictionary<int, TrainingProgram> trainingDictionary = new Dictionary<int, TrainingProgram>();
+
+                    Connection.Query<TrainingProgram, Employee, TrainingProgram>(
+                    sqlTraining,
+
+                        (trainingProgram, employee) =>
+                        {
+                            if (!trainingDictionary.ContainsKey(trainingProgram.Id))
+                            {
+                                trainingDictionary[trainingProgram.Id] = trainingProgram;
+                            }
+                            trainingDictionary[trainingProgram.Id].Employees.Add(employee);
+
+                            return trainingProgram;
+                        }
+                     );
+                    return Ok(trainingDictionary.Values);
+                }
+            } 
+            else 
+            {
+            string sqlTraining = @"
+            SELECT
+                tp.Id,
+                tp.StartDate,
+                tp.EndDate,
+                tp.MaxAttendees,
+                e.Id,
+                e.FirstName,
+                e.LastName,
+                e.DepartmentId,
+                e.IsSuperVisor
+                FROM TrainingProgram tp
+                LEFT JOIN EmployeeTraining et ON tp.Id = et.TrainingProgramId
+                LEFT JOIN Employee e ON et.EmployeeId = e.Id
+             WHERE StartDate <=  CONVERT(DATETIME, {fn CURDATE()})
+            ";
+
+                using (IDbConnection conn = Connection)
+                {
+                    Dictionary<int, TrainingProgram> trainingDictionary = new Dictionary<int, TrainingProgram>();
+
+                    Connection.Query<TrainingProgram, Employee, TrainingProgram>(
+                    sqlTraining,
+
+                        (trainingProgram, employee) =>
+                        {
+                            if (!trainingDictionary.ContainsKey(trainingProgram.Id))
+                            {
+                                trainingDictionary[trainingProgram.Id] = trainingProgram;
+                            }
+                            trainingDictionary[trainingProgram.Id].Employees.Add(employee);
+
+                            return trainingProgram;
+                        }
+                        );
+                    return Ok(trainingDictionary.Values);
+                }
+                
+            }
+
+
+                using (IDbConnection conn = Connection)
             {
 
                 IEnumerable<TrainingProgram> trainingPrograms = await conn.QueryAsync<TrainingProgram>(sql);
@@ -148,6 +231,7 @@ namespace Bangazon.Controllers
                     return Ok(trainingDictionary.Values);
                 }
             }
+            
             using (IDbConnection conn = Connection)
             {
 
@@ -219,7 +303,7 @@ namespace Bangazon.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            string sql = $@"DELETE FROM TrainingProgram WHERE Id = {id}";
+            string sql = $@"DELETE FROM TrainingProgram WHERE Id = {id} AND";
 
             using (IDbConnection conn = Connection)
             {
