@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Bangazon.Models;
 
 //Aaron Keen
-//
+//This controller allows you to get a list of employees and a single employee as well as their department and computer, post a new employee, edit and employee, and delete an employee
 
 namespace Bangazon.Controllers
 {
@@ -115,7 +115,7 @@ namespace Bangazon.Controllers
             }
         }
 
-        // POST api/Employee
+        // POST api/Employees
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Employee employee)
         {
