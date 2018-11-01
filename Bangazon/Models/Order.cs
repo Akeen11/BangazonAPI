@@ -9,9 +9,13 @@ namespace Bangazon.Models
     public class Order
     {
         public int Id { get; set; }
-        public int CustomerId { get; set; }
-        public int PaymentTypeId { get; set; }
 
-        public List<Product> Product { get; set; } = new List<Product>();
+        public int CustomerId { get; set; }
+
+        public int? PaymentTypeId { get; set; }
+
+        public Customer Customer { get; set; }
+
+        public List<Product> products { get; set; } = new List<Product>();
     }
 }

@@ -243,7 +243,7 @@ namespace Bangazon.Controllers
             }
         }
 
-        // POST api/customers
+        // POST api/Customers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Customer customer)
         {
@@ -264,7 +264,7 @@ namespace Bangazon.Controllers
             }
         }
 
-        // PUT api/customers/5
+        // PUT api/Customers/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] Customer customer)
         {
