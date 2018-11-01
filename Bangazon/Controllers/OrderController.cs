@@ -238,7 +238,9 @@ namespace Bangazon.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            string sql = $@"DELETE FROM [Order] WHERE Id = {id}";
+            string sql = $@"
+            DELETE FROM OrderProduct WHERE OrderId = {id};
+            DELETE FROM [Order] WHERE Id = {id};";
 
             using (IDbConnection conn = Connection)
             {
