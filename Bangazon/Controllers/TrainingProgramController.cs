@@ -301,12 +301,14 @@ namespace Bangazon.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-                string sql = $@"DELETE FROM TrainingProgram WHERE Id = {id} AND StartDate <= CONVERT(DATETIME, {{fn CURDATE()}})";
+                string sql = $@"
+                DELETE FROM EmployeeTraining WHERE TrainingProgramId = {id}
+                DELETE FROM TrainingProgram WHERE Id = {id} AND StartDate > CONVERT(DATETIME, {{fn CURDATE()}})";
 
             using (IDbConnection conn = Connection)
             {
                 int rowsAffected = await conn.ExecuteAsync(sql);
-                if (rowsAffected == 1)
+                if (rowsAffected == 2)
                 {
                     return new StatusCodeResult(StatusCodes.Status204NoContent);
                 }
