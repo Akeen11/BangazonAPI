@@ -15,7 +15,7 @@ namespace Bangazon.Models
 
         public string LastName { get; set; }
 
-        public bool Supervisor { get; set; }
+        public bool IsSupervisor { get; set; }
 
         public int DepartmentId { get; set; }
 
