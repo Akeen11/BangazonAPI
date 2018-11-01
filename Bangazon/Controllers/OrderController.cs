@@ -55,8 +55,16 @@ namespace Bangazon.Controllers
                     SELECT 
                         o.Id,
                         o.CustomerId,
-                        o.PaymentTypeId
+                        o.PaymentTypeId,
+                        p.Id,
+                        p.ProductTypeId,
+                        p.CustomerId,
+                        p.Title,
+                        p.Description,
+                        p.Quantity
                     FROM [Order] o
+                    LEFT JOIN OrderProduct op ON o.Id = op.OrderId
+                    LEFT JOIN Product p ON op.ProductId = p.Id
                 ";
             }
             //if _completed is NULL(http://localhost:5000/api/Order) fill it with this
@@ -66,9 +74,16 @@ namespace Bangazon.Controllers
                     SELECT 
                         o.Id,
                         o.CustomerId,
-                        o.PaymentTypeId
+                        o.PaymentTypeId,
+                        p.Id,
+                        p.ProductTypeId,
+                        p.CustomerId,
+                        p.Title,
+                        p.Description,
+                        p.Quantity
                     FROM [Order] o
-                    WHERE 1=1
+                    LEFT JOIN OrderProduct op ON o.Id = op.OrderId
+                    LEFT JOIN Product p ON op.ProductId = p.Id
                 ";
                 //if _completed=false(http://localhost:5000/api/Order?_completed=false) add this to the sql statement
                 if (_completed == false)
@@ -114,49 +129,20 @@ namespace Bangazon.Controllers
                 }
             }
 
-            if (_include == "product")
-            {
-                sql = $@"
-                    SELECT 
-                        o.Id,
-                        o.CustomerId,
-                        o.PaymentTypeId,
-                        p.Id,
-                        p.ProductTypeId,
-                        p.CustomerId,
-                        p.Title,
-                        p.Description,
-                        p.Quantity
-                    FROM [Order] o 
-                    LEFT JOIN OrderProduct op ON o.Id = op.OrderId
-                    LEFT JOIN Product p ON op.ProductId = p.Id
-                    WHERE 1=1
-                ";
-
-                Dictionary<int, Order> productList = new Dictionary<int, Order>();
-                Connection.Query<Order, Product, Order>(
-                    sql,
-                    (Order, Product) =>
+            Dictionary<int, Order> productList = new Dictionary<int, Order>();
+            Connection.Query<Order, Product, Order>(
+                sql,
+                (Order, Product) =>
+                {
+                    if (!productList.ContainsKey(Order.Id))
                     {
-                        if (!productList.ContainsKey(Order.Id))
-                        {
-                            productList[Order.Id] = Order;
-                        }
-                        productList[Order.Id].products.Add(Product);
-                        return Order;
+                        productList[Order.Id] = Order;
                     }
-                    );
-                    return Ok(productList.Values);
-                
-            }
-
-
-            using (IDbConnection conn = Connection)
-            {
-                IEnumerable<Order> orders = await conn.QueryAsync<Order>(
-                    sql);
-                        return Ok(orders);
-            }
+                    productList[Order.Id].products.Add(Product);
+                    return Order;
+                }
+                );
+            return Ok(productList.Values);
         }
 
         // GET api/<controller>/5
@@ -167,15 +153,32 @@ namespace Bangazon.Controllers
                 SELECT 
                     o.Id,
                     o.CustomerId,
-                    o.PaymentTypeId
+                    o.PaymentTypeId,
+                    p.Id,
+                    p.ProductTypeId,
+                    p.CustomerId,
+                    p.Title,
+                    p.Description,
+                    p.Quantity
                 FROM [Order] o
+                LEFT JOIN OrderProduct op ON o.Id = op.OrderId
+                LEFT JOIN Product p ON op.ProductId = p.Id
                 WHERE o.Id = {id}
             ";
-            using (IDbConnection conn = Connection)
-            {
-                IEnumerable<Order> order = await conn.QueryAsync<Order>(sql);
-                return Ok(order.Single());
-            }
+            Dictionary<int, Order> productList = new Dictionary<int, Order>();
+            Connection.Query<Order, Product, Order>(
+                sql,
+                (Order, Product) =>
+                {
+                    if (!productList.ContainsKey(Order.Id))
+                    {
+                        productList[Order.Id] = Order;
+                    }
+                    productList[Order.Id].products.Add(Product);
+                    return Order;
+                }
+                );
+            return Ok(productList.Values);
         }
 
         // POST api/<controller>
