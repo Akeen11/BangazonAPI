@@ -15,13 +15,13 @@ namespace Bangazon.Models
 
         public string LastName { get; set; }
 
-        public bool Supervisor { get; set; }
+        public bool IsSupervisor { get; set; }
 
         public int DepartmentId { get; set; }
 
         public Department Department { get; set; }
 
-        public Computer Computer { get; set; }
+        public List<Computer> Computer { get; set; } = new List<Computer>();
 
     }
 }
