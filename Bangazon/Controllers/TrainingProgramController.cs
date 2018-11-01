@@ -299,24 +299,21 @@ namespace Bangazon.Controllers
 
         // DELETE api/TrainingPrograms/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id, TrainingProgram trainingProgram)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (trainingProgram.StartDate > DateTime.Today)
-            {
-                string sql = $@"DELETE FROM TrainingProgram WHERE Id = {id}";
+                string sql = $@"DELETE FROM TrainingProgram WHERE Id = {id} AND StartDate <= CONVERT(DATETIME, {{fn CURDATE()}})";
 
-                using (IDbConnection conn = Connection)
+            using (IDbConnection conn = Connection)
+            {
+                int rowsAffected = await conn.ExecuteAsync(sql);
+                if (rowsAffected == 1)
                 {
-                    int rowsAffected = await conn.ExecuteAsync(sql);
-                    if (rowsAffected > 0)
-                    {
-                        return new StatusCodeResult(StatusCodes.Status204NoContent);
-                    }
-                    throw new Exception("No rows affected");
+                    return new StatusCodeResult(StatusCodes.Status204NoContent);
                 }
-            }
-            else {
-                return new StatusCodeResult(StatusCodes.Status403Forbidden);
+                else
+                {
+                    return new StatusCodeResult(StatusCodes.Status403Forbidden);
+                }
             }
 
         }
