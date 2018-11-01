@@ -84,6 +84,7 @@ namespace Bangazon.Controllers
                     FROM [Order] o
                     LEFT JOIN OrderProduct op ON o.Id = op.OrderId
                     LEFT JOIN Product p ON op.ProductId = p.Id
+                    WHERE 1=1
                 ";
                 //if _completed=false(http://localhost:5000/api/Order?_completed=false) add this to the sql statement
                 if (_completed == false)
