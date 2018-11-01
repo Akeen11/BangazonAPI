@@ -81,11 +81,10 @@ namespace Bangazon.Controllers
         public async Task<IActionResult> Post([FromBody] Computer computer)
         {
             string sql = $@"INSERT INTO Computer 
-            (PurchaseDate, DecomissionDate)
+            (PurchaseDate)
             VALUES
             (
-                '{computer.PurchaseDate}',
-                '{computer.DecomissionDate}'
+                '{computer.PurchaseDate}'
             );
             SELECT SCOPE_IDENTITY();";
 
@@ -93,7 +92,7 @@ namespace Bangazon.Controllers
             {
                 var newId = (await conn.QueryAsync<int>(sql)).Single();
                 computer.Id = newId;
-                return CreatedAtRoute("GetCustomer", new { id = newId }, computer);
+                return CreatedAtRoute("GetComputer", new { id = newId }, computer);
             }
         }
 
