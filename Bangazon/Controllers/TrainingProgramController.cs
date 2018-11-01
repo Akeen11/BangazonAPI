@@ -37,9 +37,8 @@ namespace Bangazon.Controllers
         }
 
         // GET api/trainingprograms?_include=employees
-        // GET api/trainingprograms?completed
         [HttpGet]
-        public async Task<IActionResult> Get(string _include, bool completed)
+        public async Task<IActionResult> Get(string _include, bool? completed)
         {
             string sql = @"
             SELECT
@@ -89,8 +88,9 @@ namespace Bangazon.Controllers
                    return Ok(trainingDictionary.Values);
                 }
             }
-            if (completed != null && completed == false){
-                string sqlTraining = @"
+            if (completed == false)
+            {
+                string sqlTrue = @"
             SELECT
                 tp.Id,
                 tp.StartDate,
@@ -112,7 +112,7 @@ namespace Bangazon.Controllers
                     Dictionary<int, TrainingProgram> trainingDictionary = new Dictionary<int, TrainingProgram>();
 
                     Connection.Query<TrainingProgram, Employee, TrainingProgram>(
-                    sqlTraining,
+                    sqlTrue,
 
                         (trainingProgram, employee) =>
                         {
@@ -124,13 +124,13 @@ namespace Bangazon.Controllers
 
                             return trainingProgram;
                         }
-                     );
+                                     );
                     return Ok(trainingDictionary.Values);
                 }
-            } 
-            else 
+            }
+            else if (completed == true)
             {
-            string sqlTraining = @"
+                string sqlFalse = @"
             SELECT
                 tp.Id,
                 tp.StartDate,
@@ -152,7 +152,7 @@ namespace Bangazon.Controllers
                     Dictionary<int, TrainingProgram> trainingDictionary = new Dictionary<int, TrainingProgram>();
 
                     Connection.Query<TrainingProgram, Employee, TrainingProgram>(
-                    sqlTraining,
+                    sqlFalse,
 
                         (trainingProgram, employee) =>
                         {
@@ -164,14 +164,12 @@ namespace Bangazon.Controllers
 
                             return trainingProgram;
                         }
-                        );
+                                            );
                     return Ok(trainingDictionary.Values);
                 }
-                
+
             }
-
-
-                using (IDbConnection conn = Connection)
+            using (IDbConnection conn = Connection)
             {
 
                 IEnumerable<TrainingProgram> trainingPrograms = await conn.QueryAsync<TrainingProgram>(sql);
@@ -301,18 +299,24 @@ namespace Bangazon.Controllers
 
         // DELETE api/TrainingPrograms/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, TrainingProgram trainingProgram)
         {
-            string sql = $@"DELETE FROM TrainingProgram WHERE Id = {id} AND";
-
-            using (IDbConnection conn = Connection)
+            if (trainingProgram.StartDate > DateTime.Today)
             {
-                int rowsAffected = await conn.ExecuteAsync(sql);
-                if (rowsAffected > 0)
+                string sql = $@"DELETE FROM TrainingProgram WHERE Id = {id}";
+
+                using (IDbConnection conn = Connection)
                 {
-                    return new StatusCodeResult(StatusCodes.Status204NoContent);
+                    int rowsAffected = await conn.ExecuteAsync(sql);
+                    if (rowsAffected > 0)
+                    {
+                        return new StatusCodeResult(StatusCodes.Status204NoContent);
+                    }
+                    throw new Exception("No rows affected");
                 }
-                throw new Exception("No rows affected");
+            }
+            else {
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
             }
 
         }
