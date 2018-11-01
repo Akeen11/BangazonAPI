@@ -41,12 +41,14 @@ namespace Bangazon.Controllers
             }
         }
 
-        // GET: api/<controller>
+        // GET: api/<controller> to get all orders, only completed ones, or only not completed ones 
         [HttpGet]
-        public async Task<IActionResult> Get(bool? _completed)
+        public async Task<IActionResult> Get(bool? _completed, string q, string _include)
         {
+            //this sets sql as an empty string 
             string sql = "";
             
+            //if _completed is null fill the sql string with this
             if (_completed == null)
             {
                 sql = @"
@@ -57,7 +59,7 @@ namespace Bangazon.Controllers
                     FROM [Order] o
                 ";
             }
-
+            //if _completed is NULL(http://localhost:5000/api/Order) fill it with this
             if (_completed != null)
             {
                  sql = $@"
@@ -68,6 +70,7 @@ namespace Bangazon.Controllers
                     FROM [Order] o
                     WHERE 1=1
                 ";
+                //if _completed=false(http://localhost:5000/api/Order?_completed=false) add this to the sql statement
                 if (_completed == false)
                 {
                     string isComplete = @"
@@ -75,6 +78,7 @@ namespace Bangazon.Controllers
                     ";
                     sql = $"{sql} {isComplete}";
                 }
+                //if _completed=true(http://localhost:5000/api/Order?_completed=true) ad this to the sql statement 
                 else
                 {
                     string isComplete = @"
@@ -83,12 +87,75 @@ namespace Bangazon.Controllers
                     sql = $"{sql} {isComplete}";
                 }
             }
+            if (_include == "customer") 
+            {
+                sql = $@"
+                    SELECT 
+                        o.Id,
+                        o.CustomerId,
+                        o.PaymentTypeId,
+                        c.Id,
+                        c.FirstName,
+                        c.LastName
+                    FROM [Order] o
+                    JOIN Customer c ON c.Id = o.CustomerId
+                    WHERE 1=1
+                ";
+                using (IDbConnection conn = Connection)
+                {
+                    IEnumerable<Order> orders = await conn.QueryAsync<Order, Customer, Order>(
+                        sql,
+                        (order, customer) => {
+                            order.Customer = customer;
+                            return order;
+                        }
+                        );
+                    return Ok(orders);
+                }
+            }
+
+            if (_include == "product")
+            {
+                sql = $@"
+                    SELECT 
+                        o.Id,
+                        o.CustomerId,
+                        o.PaymentTypeId,
+                        p.Id,
+                        p.ProductTypeId,
+                        p.CustomerId,
+                        p.Title,
+                        p.Description,
+                        p.Quantity
+                    FROM [Order] o 
+                    LEFT JOIN OrderProduct op ON o.Id = op.OrderId
+                    LEFT JOIN Product p ON op.ProductId = p.Id
+                    WHERE 1=1
+                ";
+
+                Dictionary<int, Order> productList = new Dictionary<int, Order>();
+                Connection.Query<Order, Product, Order>(
+                    sql,
+                    (Order, Product) =>
+                    {
+                        if (!productList.ContainsKey(Order.Id))
+                        {
+                            productList[Order.Id] = Order;
+                        }
+                        productList[Order.Id].products.Add(Product);
+                        return Order;
+                    }
+                    );
+                    return Ok(productList.Values);
+                
+            }
+
 
             using (IDbConnection conn = Connection)
             {
-                IEnumerable<Order> order = await conn.QueryAsync<Order>(
+                IEnumerable<Order> orders = await conn.QueryAsync<Order>(
                     sql);
-                return Ok(order);
+                        return Ok(orders);
             }
         }
 

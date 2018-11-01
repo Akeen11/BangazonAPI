@@ -10,13 +10,12 @@ namespace Bangazon.Models
     {
         public int Id { get; set; }
 
-        // public Customer Customer { get; set; }
-
         public int CustomerId { get; set; }
 
-        //use paymentTypeId to find out if order the is compleated 
         public int? PaymentTypeId { get; set; }
 
-        // public List<Product> productList { get; set; } = new List<Product>();
+        public Customer Customer { get; set; }
+
+        public List<Product> products { get; set; } = new List<Product>();
     }
 }
