@@ -21,7 +21,7 @@ namespace Bangazon.Models
 
         public Department Department { get; set; }
 
-        public List<Computer> Computer { get; set; } = new List<Computer>();
+        public Computer Computer { get; set; }
 
     }
 }
